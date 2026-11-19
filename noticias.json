@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-19T02:44:35.029418Z",
+  "generated_at": "2026-11-19T02:51:43.849267Z",
   "status": "ok",
   "sources_ok": 13,
   "sources_total": 13,
-  "new_articles": 90,
+  "new_articles": 94,
   "errors": [],
   "articles": [
     {
@@ -95,6 +95,15 @@
       "category": "Mercados",
       "published_at": "2026-11-19T01:44:42Z",
       "collected_at": "2026-11-19T02:40:39.528639Z"
+    },
+    {
+      "id": "015f7c06d81538710f38eab7",
+      "title": "Elon Musk Says Nvidia Made a ‘Mistake’ by Parting Ways With Jensen Huang: Calls Ex-CEO ‘Michael Jordan Perhaps at His Peak Level’",
+      "url": "https://finance.yahoo.com/markets/stocks/articles/elon-musk-says-nvidia-made-014213735.html?.tsrc=rss",
+      "source": "Yahoo Finance / Acciones",
+      "category": "Mercados",
+      "published_at": "2026-11-19T01:42:13Z",
+      "collected_at": "2026-11-19T02:51:43.849267Z"
     },
     {
       "id": "45db81db174d6a1445351e61",
@@ -644,6 +653,15 @@
       "category": "Estados Unidos",
       "published_at": "2026-11-18T21:08:02Z",
       "collected_at": "2026-11-19T02:40:39.528639Z"
+    },
+    {
+      "id": "731bc48fd52386122a877f65",
+      "title": "Fed Minutes Show Broad Support for More Hikes as AI Debt Enters Stability Debate - BigGo Finance",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE95SlBCTjVkSE40aUxDQ2ZfRksxOGxyaU51V3Y5X200dWhWNWFNUmdSdW83SkVfZTEtWVdlVkl0NkFzVl9aaVhDaGh4UmMxVHZYdDZISDgtRmRPb0JZQnZXaHlhcG05cXlDaG1mVi0zZXZvR2ViR0E?oc=5",
+      "source": "BigGo Finance",
+      "category": "Estados Unidos",
+      "published_at": "2026-11-18T20:35:00Z",
+      "collected_at": "2026-11-19T02:51:43.849267Z"
     },
     {
       "id": "d870c8d53647874a243fb65d",
@@ -2185,6 +2203,15 @@
       "collected_at": "2026-11-19T02:40:39.528639Z"
     },
     {
+      "id": "3c6de22445d41bd7c3c5f1a7",
+      "title": "The 5 Best Stocks in George Soros’s Portfolio - Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPRHF3R0tFQ2I5c3J4VzNwc1JCdjVRRy1MeGJPRjJmX05VYktVN0l0a21EYUZPVDJFUE80YlA3dERvNTh6M3c4a1FPbTJVTlpNNGNnbDBhSDl3a21mWDZSZ1VZbDJYeC1ZVTVMbHU5aFlfTFFkYVpkLWRNRVNEbzB5R0gtN3BNRUFyUnlqOGtwSnZwaWVQSnc?oc=5",
+      "source": "Yahoo Finance",
+      "category": "Mercados",
+      "published_at": "2026-11-17T19:10:12Z",
+      "collected_at": "2026-11-19T02:51:43.849267Z"
+    },
+    {
       "id": "1f4b7c26eae8df0bdc31e692",
       "title": "Lumentum, Corning, and other optical-related stocks jump on Chinese import restrictions - Yahoo Finance",
       "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPMEpjU21HZUgtdFhVWkswbmt1YS1IVlRrZWI1OGVqcG95ZmVPQjZmeDdNMzNyTm14bGxxN2J6bjM5WldXRWwydFVZMlVqZllfWmx4MFJzR2NQd1lrRnRJZGw0dC1GZlctRHBKak5NUjgwNHdySHV0VXBVUWs5eHRRc1NuWjVOMEpkOWU4UW9IN2Y2SVJKODNkWFFNVzRXazdyV2RTNkI4SnRJVUZOd01Dc1ZMQzJfTnFENURaTjAzQ3loSGRLZFJjZkN5WkZCRFZzaFpYVmZISW8zWmNMQXFGcm13?oc=5",
@@ -2653,6 +2680,15 @@
       "collected_at": "2026-11-19T02:40:39.528639Z"
     },
     {
+      "id": "90914cbf5735411006ca1445",
+      "title": "Sterling edges up against dollar, breaking five-day slump - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNRGwtNHNoRlNEbTh3eGVDWHJJWHhEUzlXajUwN3pPUW9Hd3hydzc5VWVlTjV2eXBHaEE0aFprNGxxOF9DUUtTNWtwaVdMOEdxM3dQbXdmd1Z5TVZCTTQwVnBXX0JiTXZwc1hmSGloLUJta08xS1ZER1pVOWV3akFCR09tdE9kb1RZLTNkdWFnNkNETmg2bTN2SFpUbVRpdTduTnRV?oc=5",
+      "source": "Reuters",
+      "category": "Mercados",
+      "published_at": "2026-11-17T11:49:58Z",
+      "collected_at": "2026-11-19T02:51:43.849267Z"
+    },
+    {
       "id": "a9acffc654114bd527559548",
       "title": "COMMENTARY: Morning Bid: Chip wreck - Reuters",
       "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQQmNFTVpRdjJEQ0FMbGZEWkZybUZQSHY1cG91MVZlZU0xY1RtRzFNLTc0U3Nnc3VhcXFnTHRGejY1Y3hrekczYTZXNkEzLVJWenhLbjIzUm81UWQwOXZ3NzlEYlBKeDFfNzVHRG5SSWhyMHBhd1RtMnZCeUtnLUZEOFN4UGVpQzdXN3ppNldnY01CaXFsbm40?oc=5",
@@ -2668,42 +2704,6 @@
       "source": "Reuters",
       "category": "Mercados",
       "published_at": "2026-11-17T11:35:04Z",
-      "collected_at": "2026-11-19T02:40:39.528639Z"
-    },
-    {
-      "id": "dbd80f052d6bcb1e32724666",
-      "title": "Iran escalates threats as third U.S. carrier arrives in Middle East, tanker struck in Hormuz",
-      "url": "https://www.cnbc.com/2026/11/17/iran-war-trump-hormuz-oil-.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-17T11:22:54Z",
-      "collected_at": "2026-11-19T02:40:39.528639Z"
-    },
-    {
-      "id": "fa49644999356d8d2e97cb0f",
-      "title": "CoreWeave Answered the Biggest Question About AI Stocks. Now Nvidia Has to Confirm It. - Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNVzZjUENLaFJGZFYwYU55TVA2aHNUTUZtbm5WemlRT2lEa3ljTzA1NElvVXI1eDYtODR1MU9MQnVZUm9JOENvLU5DWm5Jb2FBbVBybFl6TmdsUzZtZkp1S0JRMThIZXU2WGlianR6blNJemJveWJkUmxsSjRqeGRBeHdJdkN2QUVNZ2w1SlNfamJFNEsweFVJeURLRUZydnh6UG13?oc=5",
-      "source": "Yahoo Finance",
-      "category": "Mercados",
-      "published_at": "2026-11-17T11:03:01Z",
-      "collected_at": "2026-11-19T02:40:39.528639Z"
-    },
-    {
-      "id": "659a2d85aa22cdfbc606a11e",
-      "title": "JD Vance says he'll decide 'sometime next year' about 2028 presidential run",
-      "url": "https://www.cnbc.com/2026/11/17/jd-vance-2028-presidential-run-decision.html",
-      "source": "CNBC / Politics",
-      "category": "Política",
-      "published_at": "2026-11-17T10:40:56Z",
-      "collected_at": "2026-11-19T02:40:39.528639Z"
-    },
-    {
-      "id": "fb78f582dad299f026ad4088",
-      "title": "Euro zone economy seen growing moderately, France outlook weakest -Commission - Reuters",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNc2k3bXJscXRZNnlPa3VxNTREb3djN2dXWVhFS1hwQ1ZFUkU0OF9KWnlLdFRPNHF1VEpVRGd2cmhJTGFDTnd4QTN4R0pmWmRtTkV2S1JuUTlBUTNCMzZxVDk0cEJWMzE5TjBVaVJwaFpJdzZ3TmRuWUNxeHpwSTJvbTZ4d0hQY284dmk0QWtLM0ZaQ0x0aHRZV1NxbHdaTzAxSTV3QmdsaExSTlJwb002RmZEYU93Qlk2?oc=5",
-      "source": "Reuters",
-      "category": "Mercados",
-      "published_at": "2026-11-17T10:08:37Z",
       "collected_at": "2026-11-19T02:40:39.528639Z"
     }
   ]
