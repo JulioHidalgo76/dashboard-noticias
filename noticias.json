@@ -1,10 +1,12 @@
 {
-  "generated_at": "2026-11-19T02:51:43.849267Z",
-  "status": "ok",
-  "sources_ok": 13,
+  "generated_at": "2026-11-19T02:52:29.390354Z",
+  "status": "partial",
+  "sources_ok": 12,
   "sources_total": 13,
-  "new_articles": 94,
-  "errors": [],
+  "new_articles": 92,
+  "errors": [
+    "Google News / Política: HTTPError: HTTP Error 429: Too Many Requests"
+  ],
   "articles": [
     {
       "id": "4f0ccdd92e1cdda3a7310b8e",
