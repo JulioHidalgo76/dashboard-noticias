@@ -1,0 +1,727 @@
+```html
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Dashboard Noticias</title>
+<script>
+  try {
+    const theme = localStorage.getItem('dashboard-noticias-theme');
+    if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+  } catch {}
+</script>
+<style>
+  :root {
+    color-scheme: light;
+    --nav: #0b1d32; --nav-line: #24364c; --nav-ink: #c0cddd; --nav-active: #16364b;
+    --bg: #f1f5f9; --panel: #fff; --subtle: #f7f9fc; --ink: #10243b; --muted: #526378;
+    --line: #dbe4ed; --accent: #006e68; --accent-bg: #e1f5f1; --focus: #00837a;
+    --primary: #00746d; --primary-hover: #005f59; --warn: #784600; --warn-bg: #fff5dc;
+    --danger: #9a2c37; --danger-bg: #fff0f1; --shadow: 0 2px 5px #10243b08;
+    --tracks: #e8eef4;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      color-scheme: dark;
+      --bg: #0a1524; --panel: #101f31; --subtle: #142538; --ink: #eef5fb; --muted: #afbed0;
+      --line: #2b4055; --accent: #63dfce; --accent-bg: #113a3b; --focus: #6af1dd;
+      --primary: #00746d; --primary-hover: #006861; --warn: #ffd58c; --warn-bg: #392c17;
+      --danger: #ffb4bd; --danger-bg: #3f232c; --shadow: none; --tracks: #25394f;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0a1524; --panel: #101f31; --subtle: #142538; --ink: #eef5fb; --muted: #afbed0;
+    --line: #2b4055; --accent: #63dfce; --accent-bg: #113a3b; --focus: #6af1dd;
+    --primary: #00746d; --primary-hover: #006861; --warn: #ffd58c; --warn-bg: #392c17;
+    --danger: #ffb4bd; --danger-bg: #3f232c; --shadow: none; --tracks: #25394f;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 14px/1.5 system-ui, sans-serif; }
+  button, input, select { font: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: default; opacity: .55; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  a { color: var(--accent); }
+  h1, h2, h3, p { margin: 0; }
+
+  .icon {
+    width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor;
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle;
+  }
+
+  .shell { display: grid; grid-template-columns: 226px minmax(0, 1fr); min-height: 100vh; }
+  .sidebar {
+    align-self: start; position: sticky; top: 0; min-height: 100vh; background: var(--nav);
+    color: var(--nav-ink); display: flex; flex-direction: column; padding: 25px 15px 19px;
+  }
+  .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px 25px; color: #fff; font-size: 15px; font-weight: 740; }
+  .brand-mark { display: grid; place-items: center; width: 39px; height: 39px; border-radius: 10px; background: #69e1cf; color: var(--nav); flex: none; }
+  .brand-mark .icon { width: 23px; height: 23px; }
+  .nav { border-top: 1px solid var(--nav-line); padding-top: 17px; display: grid; gap: 4px; }
+  .nav button, .theme {
+    display: flex; align-items: center; gap: 11px; width: 100%; min-height: 43px; padding: 9px 11px;
+    background: none; color: inherit; border: 1px solid transparent; border-radius: 8px;
+    text-align: left; white-space: nowrap;
+  }
+  .nav button:hover, .theme:hover { background: #152b41; color: #fff; }
+  .nav button[aria-current="true"] { background: var(--nav-active); color: #81eedb; border-color: #295064; font-weight: 650; }
+  .side-bottom { margin-top: auto; padding-top: 24px; }
+  .theme { border-color: var(--nav-line); }
+
+  main { min-width: 0; padding: 34px clamp(22px, 3.2vw, 54px) 40px; width: 100%; max-width: 1760px; margin: 0 auto; }
+  .masthead { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 25px; }
+  h1 { font-size: clamp(27px, 3vw, 39px); letter-spacing: -.045em; line-height: 1.14; }
+  .collection { color: var(--muted); margin-top: 8px; display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 13px; }
+  .collection .icon { width: 15px; height: 15px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 9px; }
+  .button {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 41px;
+    padding: 8px 13px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel);
+    color: var(--ink); font-weight: 650; white-space: nowrap;
+  }
+  .button:not(:disabled):hover { background: var(--subtle); }
+  .button.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .button.primary:not(:disabled):hover { background: var(--primary-hover); }
+  .button .icon { width: 16px; height: 16px; }
+  .button[aria-busy="true"] .icon { animation: rotate 1.2s linear infinite; }
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .button[aria-busy="true"] .icon { animation: none; } }
+
+  .notice { padding: 13px 16px; border-radius: 9px; background: var(--accent-bg); color: var(--accent); margin-bottom: 17px; overflow-wrap: anywhere; }
+  .notice[data-tone="partial"] { background: var(--warn-bg); color: var(--warn); }
+  .notice[data-tone="error"] { background: var(--danger-bg); color: var(--danger); }
+  .notice p + p, .notice details { margin-top: 5px; }
+  .notice summary { cursor: pointer; }
+  .notice ul { margin: 6px 0 0; padding-left: 20px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+  .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; margin-bottom: 19px; }
+  .metric, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); }
+  .metric { padding: 15px; min-width: 0; }
+  .metric-label { display: flex; justify-content: space-between; align-items: center; gap: 7px; color: var(--muted); font-weight: 600; font-size: 13px; }
+  .metric-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: var(--accent-bg); color: var(--accent); flex: none; }
+  .metric-icon .icon { width: 17px; height: 17px; }
+  .metric-value {
+    display: block; margin: 5px 0 1px; font-size: clamp(25px, 3vw, 34px); font-weight: 720;
+    letter-spacing: -.05em; line-height: 1.16; font-variant-numeric: tabular-nums; overflow-wrap: anywhere;
+  }
+  .metric small { color: var(--muted); font-size: 12px; }
+
+  .filters { padding: 16px; margin-bottom: 19px; }
+  .filter-grid {
+    display: grid; grid-template-columns: minmax(165px, 2fr) repeat(2, minmax(115px, 1fr)) repeat(2, minmax(121px, 1fr)) auto;
+    align-items: end; gap: 10px;
+  }
+  .field { display: grid; gap: 5px; min-width: 0; color: var(--muted); font-size: 12px; font-weight: 650; }
+  .field input, .field select {
+    width: 100%; min-width: 0; min-height: 41px; border: 1px solid var(--line); border-radius: 7px;
+    background: var(--subtle); color: var(--ink); padding: 8px 9px; font-size: 13px; font-weight: 450;
+  }
+  .field input::placeholder { color: var(--muted); opacity: 1; }
+  .searchbox { position: relative; }
+  .searchbox .icon { position: absolute; top: 12px; left: 10px; pointer-events: none; width: 16px; height: 16px; }
+  .searchbox input { padding-left: 33px; }
+
+  .layout { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(245px, 1fr); gap: 16px; align-items: start; }
+  .panel-heading { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 11px; }
+  h2 { font-size: 17px; letter-spacing: -.018em; }
+  .count { font-size: 12px; font-weight: 650; border: 1px solid var(--line); color: var(--muted); background: var(--subtle); padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+  .articles { display: grid; gap: 8px; padding: 10px; }
+  .article { border: 1px solid var(--line); border-radius: 9px; padding: 13px 14px; min-width: 0; }
+  .article:hover { background: var(--subtle); }
+  .article-meta, .article-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 10px; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+  .article-footer { justify-content: space-between; margin-top: 9px; }
+  .article h3 { font-size: 16px; line-height: 1.4; margin-top: 7px; overflow-wrap: anywhere; }
+  .article a { font-weight: 680; text-decoration: none; }
+  .article h3 a { color: inherit; }
+  .article a:hover { text-decoration: underline; }
+  .article-footer .icon { width: 13px; height: 13px; margin-left: 4px; }
+  .badge { background: var(--accent-bg); color: var(--accent); border-radius: 5px; padding: 2px 7px; font-weight: 650; }
+
+  .empty { padding: 34px 21px 39px; color: var(--muted); }
+  .empty-icon { display: grid; place-items: center; background: var(--accent-bg); color: var(--accent); width: 41px; height: 41px; border-radius: 10px; margin-bottom: 12px; }
+  .empty strong { display: block; color: var(--ink); font-size: 16px; margin-bottom: 5px; }
+  .empty p + p { margin-top: 9px; }
+  .chart { display: grid; gap: 13px; padding: 16px 18px; list-style: none; margin: 0; }
+  .chart-label { display: flex; justify-content: space-between; gap: 9px; font-size: 13px; overflow-wrap: anywhere; }
+  .chart-label strong { white-space: nowrap; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .track { height: 6px; margin-top: 6px; background: var(--tracks); border-radius: 5px; overflow: hidden; }
+  .bar { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+  .chart-note { padding: 0 18px 15px; color: var(--muted); font-size: 12px; }
+
+  @media (max-width: 1300px) {
+    .filter-grid { grid-template-columns: minmax(140px, 1.35fr) 1fr 1fr; }
+  }
+  @media (max-width: 1020px) {
+    .shell { grid-template-columns: 185px minmax(0, 1fr); }
+    .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .layout { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 720px) {
+    .shell { display: block; }
+    .sidebar { position: static; min-height: 0; padding: 13px 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 11px; }
+    .brand { padding: 0; }
+    .brand-mark { width: 33px; height: 33px; }
+    .nav { grid-column: 1 / -1; grid-row: 2; display: flex; flex-wrap: wrap; padding-top: 9px; }
+    .nav button { width: auto; min-height: 34px; padding: 5px 8px; gap: 6px; font-size: 12px; }
+    .nav .icon { width: 14px; height: 14px; }
+    .side-bottom { padding: 0; }
+    .theme { min-height: 34px; padding: 5px 8px; font-size: 12px; }
+    main { padding: 24px 16px; }
+    .masthead { align-items: flex-start; flex-direction: column; gap: 14px; margin-bottom: 17px; }
+    .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .search-field { grid-column: 1 / -1; }
+    .filter-grid > .button { justify-self: start; }
+  }
+  @media (max-width: 365px) {
+    .metric { padding: 11px; }
+    .metric-icon { width: 25px; height: 25px; }
+    .metric-icon .icon { width: 14px; height: 14px; }
+  }
+</style>
+</head>
+<body>
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-news" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h4v4H7zM14 8h3m-3 4h3M7 16h10"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 10-8 10S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4m0 1c5-5 9 4 14-1v11c-5 5-9-4-14 1"/></symbol>
+  <symbol id="i-market" viewBox="0 0 24 24"><path d="M4 4v16h16M7 14l4-4 3 3 5-6m-4 0h4v4"/></symbol>
+  <symbol id="i-policy" viewBox="0 0 24 24"><path d="M3 9l9-5 9 5H3zm2 11h14M7 12v5m5-5v5m5-5v5"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5m-4-3a8 8 0 0 1 13-3l2 2M4 16l2 2a8 8 0 0 0 13-3"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11m-4-4 4 4 4-4M5 16v4h14v-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v8m-4-4h8"/></symbol>
+  <symbol id="i-sources" viewBox="0 0 24 24"><path d="M12 12h.01M8 8a5.7 5.7 0 0 0 0 8m8-8a5.7 5.7 0 0 1 0 8M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.5"/><path d="m15 15 4.5 4.5"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-8 8m-2-7H5v13h13v-4"/></symbol>
+</svg>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-news"/></svg></span>
+      Dashboard Noticias
+    </div>
+    <nav class="nav" aria-label="Secciones">
+      <button type="button" data-category="" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>General</button>
+      <button type="button" data-category="México"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>México</button>
+      <button type="button" data-category="Estados Unidos"><svg class="icon" aria-hidden="true"><use href="#i-flag"/></svg>Estados Unidos</button>
+      <button type="button" data-category="Mercados"><svg class="icon" aria-hidden="true"><use href="#i-market"/></svg>Mercados</button>
+      <button type="button" data-category="Política"><svg class="icon" aria-hidden="true"><use href="#i-policy"/></svg>Política</button>
+    </nav>
+    <div class="side-bottom">
+      <button type="button" class="theme" id="theme"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg><span>Modo oscuro</span></button>
+    </div>
+  </aside>
+
+  <main>
+    <header class="masthead">
+      <div>
+        <h1>Dashboard Noticias</h1>
+        <p class="collection">
+          <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+          <span>Última recopilación</span>
+          <time id="collection-date" hidden></time><span id="collection-missing">—</span>
+        </p>
+      </div>
+      <div class="actions">
+        <button type="button" class="button" id="export" disabled><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Exportar CSV</button>
+        <button type="button" class="button primary" id="refresh"><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Refresh</button>
+      </div>
+    </header>
+
+    <div id="announcement" class="sr-only" role="status"></div>
+    <section id="notice" class="notice" aria-label="Estado de recopilación" hidden>
+      <p><strong id="notice-heading"></strong></p>
+      <p id="notice-message"></p>
+      <details id="error-details" hidden>
+        <summary>Ver detalles de las fuentes</summary>
+        <ul id="error-list"></ul>
+      </details>
+    </section>
+
+    <section class="metrics" aria-label="Indicadores de la recopilación">
+      <div class="metric">
+        <div class="metric-label">Titulares recopilados<span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-news"/></svg></span></div>
+        <strong id="metric-articles" class="metric-value">—</strong>
+        <small>Total en el archivo</small>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Titulares nuevos<span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></span></div>
+        <strong id="metric-new" class="metric-value">—</strong>
+        <small>En la última recopilación</small>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Fuentes consultadas<span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-sources"/></svg></span></div>
+        <strong id="metric-sources" class="metric-value">—</strong>
+        <small>Con éxito / total previsto</small>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Resultados visibles<span class="metric-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span></div>
+        <strong id="metric-visible" class="metric-value">—</strong>
+        <small>Con los filtros actuales</small>
+      </div>
+    </section>
+
+    <section class="panel filters" aria-label="Filtros de titulares">
+      <div class="filter-grid">
+        <label class="field search-field">Buscar titulares
+          <span class="searchbox">
+            <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <input type="search" id="query" placeholder="Título o fuente" autocomplete="off">
+          </span>
+        </label>
+        <label class="field">Categoría<select id="category"><option value="">Todas</option></select></label>
+        <label class="field">Fuente<select id="source"><option value="">Todas</option></select></label>
+        <label class="field">Desde<input id="from" type="date"></label>
+        <label class="field">Hasta<input id="to" type="date"></label>
+        <button class="button" type="button" id="clear" disabled>Limpiar filtros</button>
+      </div>
+      <p id="filter-error" role="status" hidden style="margin-top:9px;color:var(--danger)">La fecha «Desde» debe ser anterior o igual a «Hasta».</p>
+    </section>
+
+    <div class="layout">
+      <section class="panel" aria-labelledby="section-heading">
+        <div class="panel-heading">
+          <h2 id="section-heading">Titulares</h2>
+          <span class="count" id="result-label" hidden></span>
+        </div>
+        <div class="articles" id="articles" hidden></div>
+        <div class="empty" id="empty">
+          <span class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-news"/></svg></span>
+          <strong id="empty-heading">Cargando titulares…</strong>
+          <p id="empty-message"></p>
+          <p id="workflow" hidden>En GitHub, abre el repositorio y selecciona <b>Actions → Actualizar noticias y publicar dashboard → Run workflow → Run workflow</b>. Cuando termine la publicación, pulsa <b>Refresh</b>.</p>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="chart-heading">
+        <div class="panel-heading"><h2 id="chart-heading">Distribución temática</h2></div>
+        <ul class="chart" id="chart"></ul>
+        <p class="chart-note" id="chart-note">Esperando los datos de recopilación.</p>
+      </section>
+    </div>
+
+    <noscript><p class="notice" data-tone="error" style="margin-top:16px">Activa JavaScript para leer y filtrar las noticias.</p></noscript>
+  </main>
+</div>
+
+<script>
+  'use strict';
+
+  const byId = id => document.getElementById(id);
+  const fields = ['query', 'category', 'source', 'from', 'to'].map(byId);
+  const [query, category, source, from, to] = fields;
+  const sections = [...document.querySelectorAll('.nav button')];
+  const standardCategories = sections.map(button => button.dataset.category).filter(Boolean);
+
+  const region = 'America/Mexico_City';
+  const numbers = new Intl.NumberFormat('es-MX');
+  const percentages = new Intl.NumberFormat('es-MX', { style: 'percent', maximumFractionDigits: 1 });
+  const dates = new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeZone: region });
+  const dateTimes = new Intl.DateTimeFormat('es-MX', {
+    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: region, timeZoneName: 'short'
+  });
+  const filterDates = new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric', month: '2-digit', day: '2-digit', timeZone: region
+  });
+
+  const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+  const themeButton = byId('theme');
+  const refreshButton = byId('refresh');
+  const exportButton = byId('export');
+  let snapshot = null;
+  let articles = [];
+  let visible = [];
+  let categories = standardCategories;
+  let loading = false;
+  let loadError = '';
+
+  function element(tag, value, className) {
+    const node = document.createElement(tag);
+    if (value !== undefined) node.textContent = value;
+    if (className) node.className = className;
+    return node;
+  }
+
+  function addIcon(node, name) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    const use = document.createElementNS(ns, 'use');
+    svg.setAttribute('class', 'icon');
+    svg.setAttribute('aria-hidden', 'true');
+    use.setAttribute('href', '#i-' + name);
+    svg.append(use);
+    node.append(svg);
+  }
+
+  function normalized(value) {
+    return value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  }
+
+  function fieldText(value) {
+    return typeof value === 'string' ? value.trim() : '';
+  }
+
+  function parseDate(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(value)) return null;
+    const date = new Date(value.length === 10 ? value + 'T12:00:00Z' : value);
+    return Number.isFinite(date.getTime()) ? date : null;
+  }
+
+  function dateKey(date) {
+    if (!date) return '';
+    const parts = Object.fromEntries(filterDates.formatToParts(date).map(part => [part.type, part.value]));
+    return [parts.year.padStart(4, '0'), parts.month, parts.day].join('-');
+  }
+
+  function safeLink(value) {
+    try {
+      const url = new URL(fieldText(value));
+      return ['https:', 'http:'].includes(url.protocol) && !url.username && !url.password ? url.href : '';
+    } catch {
+      return '';
+    }
+  }
+
+  function prepareArticle(raw) {
+    const title = fieldText(raw.title);
+    const outlet = fieldText(raw.source);
+    const topic = fieldText(raw.category);
+    const published = parseDate(raw.published_at);
+    return {
+      id: raw.id ?? '',
+      title,
+      source: outlet,
+      category: standardCategories.find(name => normalized(name) === normalized(topic)) || topic || 'Sin categoría',
+      url: safeLink(raw.url),
+      published,
+      day: dateKey(published),
+      publishedAt: fieldText(raw.published_at),
+      collectedAt: fieldText(raw.collected_at),
+      sortTime: (published ?? parseDate(raw.collected_at))?.getTime() ?? -Infinity,
+      search: normalized(title + ' ' + outlet)
+    };
+  }
+
+  function validate(data) {
+    const statuses = ['pending', 'ok', 'partial', 'error'];
+    const counts = ['sources_ok', 'sources_total', 'new_articles'];
+    if (!data || !statuses.includes(data.status) ||
+        !(data.generated_at === null || parseDate(data.generated_at)) ||
+        !counts.every(key => Number.isInteger(data[key]) && data[key] >= 0) ||
+        !Array.isArray(data.errors) || !data.errors.every(item => typeof item === 'string') ||
+        !Array.isArray(data.articles) || !data.articles.every(item => item && typeof item === 'object' && !Array.isArray(item))) {
+      throw new Error('La estructura de noticias.json no coincide con el contrato del dashboard.');
+    }
+  }
+
+  function fillSelect(select, values) {
+    const selected = select.value;
+    const options = document.createDocumentFragment();
+    options.append(new Option('Todas', ''));
+    for (const value of values) options.append(new Option(value, value));
+    select.replaceChildren(options);
+    if (values.includes(selected)) select.value = selected;
+  }
+
+  function applySnapshot(data) {
+    const articleList = data.articles.map(prepareArticle);
+    articleList.sort((first, second) => second.sortTime - first.sortTime);
+    categories = [...new Set([...standardCategories, ...articleList.map(article => article.category)])];
+    const sources = [...new Set(articleList.map(article => article.source).filter(Boolean))];
+    sources.sort((first, second) => first.localeCompare(second, 'es-MX'));
+
+    snapshot = data;
+    articles = articleList;
+    fillSelect(category, categories);
+    fillSelect(source, sources);
+
+    const collected = parseDate(data.generated_at);
+    const date = byId('collection-date');
+    date.hidden = !collected;
+    byId('collection-missing').hidden = Boolean(collected);
+    if (collected) {
+      date.dateTime = data.generated_at;
+      date.textContent = dateTimes.format(collected);
+    }
+
+    byId('metric-articles').textContent = numbers.format(articles.length);
+    byId('metric-new').textContent = numbers.format(data.new_articles);
+    byId('metric-sources').textContent = numbers.format(data.sources_ok) + ' / ' + numbers.format(data.sources_total);
+  }
+
+  function renderNotice() {
+    const variants = {
+      pending: ['Recopilación pendiente', 'El archivo publicado aún indica que la recopilación está pendiente.'],
+      partial: ['Fuentes parciales', 'La última recopilación se publicó con incidencias en las fuentes.'],
+      error: ['Error de recopilación', 'La última recopilación reportó un error.']
+    };
+    const status = snapshot?.status;
+    const variant = variants[status];
+    const errors = snapshot?.errors ?? [];
+    const notice = byId('notice');
+    notice.hidden = !loadError && !variant && !errors.length;
+    notice.dataset.tone = loadError ? 'error' : status === 'ok' && errors.length ? 'partial' : (status ?? '');
+    byId('notice-heading').textContent = [
+      loadError ? 'No se pudo leer noticias.json' : '',
+      variant?.[0] || (errors.length ? 'Avisos de las fuentes' : '')
+    ].filter(Boolean).join(' · ');
+    byId('notice-message').textContent = [
+      loadError,
+      loadError && snapshot ? 'Se conservan los datos de la última lectura disponible.' : '',
+      variant?.[1]
+    ].filter(Boolean).join(' ');
+    byId('error-details').hidden = !errors.length;
+    byId('error-list').replaceChildren(...errors.map(error => element('li', error)));
+  }
+
+  function originalLink(article, label) {
+    const link = element('a', label);
+    link.href = article.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    return link;
+  }
+
+  function articleCard(article) {
+    const card = element('article', undefined, 'article');
+    const meta = element('div', undefined, 'article-meta');
+    meta.append(element('span', article.category, 'badge'), element('span', article.source || 'Fuente no indicada'));
+
+    const headline = element('h3');
+    const title = article.title || 'Titular sin título';
+    if (article.url) headline.append(originalLink(article, title));
+    else headline.textContent = title;
+
+    const footer = element('div', undefined, 'article-footer');
+    const date = article.published ? element('time', dates.format(article.published)) : element('span', 'Fecha sin publicar');
+    if (article.published) {
+      date.dateTime = article.publishedAt;
+      date.title = dateTimes.format(article.published);
+    }
+    footer.append(date);
+
+    if (article.url) {
+      const link = originalLink(article, 'Ver original');
+      link.setAttribute('aria-label', 'Ver original: ' + title + ' (abre en otra pestaña)');
+      addIcon(link, 'external');
+      footer.append(link);
+    } else {
+      footer.append(element('span', 'Enlace no disponible'));
+    }
+
+    card.append(meta, headline, footer);
+    return card;
+  }
+
+  function renderChart(hasLoaded) {
+    const counts = new Map(categories.map(name => [name, 0]));
+    for (const article of visible) counts.set(article.category, counts.get(article.category) + 1);
+    const chart = byId('chart');
+    const note = byId('chart-note');
+    chart.hidden = !hasLoaded;
+    chart.replaceChildren();
+
+    if (hasLoaded) {
+      for (const [name, count] of counts) {
+        const fraction = visible.length ? count / visible.length : 0;
+        const row = element('li');
+        const label = element('div', undefined, 'chart-label');
+        label.append(element('span', name), element('strong', numbers.format(count) + ' · ' + percentages.format(fraction)));
+        const track = element('div', undefined, 'track');
+        track.setAttribute('aria-hidden', 'true');
+        const bar = element('span', undefined, 'bar');
+        bar.style.width = (fraction * 100) + '%';
+        track.append(bar);
+        row.append(label, track);
+        chart.append(row);
+      }
+    }
+
+    if (visible.length) note.textContent = 'Proporción de los titulares visibles.';
+    else if (hasLoaded) note.textContent = 'Sin titulares visibles para calcular la distribución.';
+    else note.textContent = loading ? 'Esperando los datos de recopilación.' : 'Distribución no disponible.';
+  }
+
+  function renderEmpty(invalidRange) {
+    const hasResults = visible.length > 0;
+    byId('empty').hidden = hasResults;
+    byId('workflow').hidden = !snapshot || articles.length > 0;
+    if (hasResults) return;
+
+    let title = 'Aún no se han recopilado noticias';
+    let message = 'Ejecuta el flujo de recopilación para publicar los primeros titulares.';
+    if (!snapshot && loading) {
+      title = 'Cargando titulares…';
+      message = '';
+    } else if (!snapshot) {
+      title = 'Titulares no disponibles';
+      message = 'Comprueba que noticias.json esté publicado junto a index.html y pulsa Refresh para reintentar.';
+    } else if (invalidRange && articles.length) {
+      title = 'Revisa el intervalo de fechas';
+      message = 'Corrige el rango para consultar los titulares.';
+    } else if (articles.length) {
+      title = 'Sin coincidencias';
+      message = 'Cambia la búsqueda o limpia los filtros para ver más titulares.';
+    }
+
+    byId('empty-heading').textContent = title;
+    byId('empty-message').textContent = message;
+    byId('empty-message').hidden = !message;
+  }
+
+  function render() {
+    const words = normalized(query.value.trim()).split(/\s+/).filter(Boolean);
+    const invalidRange = Boolean(from.value && to.value && from.value > to.value);
+    const hasLoaded = Boolean(snapshot);
+    byId('filter-error').hidden = !invalidRange;
+
+    for (const dateInput of [from, to]) {
+      dateInput.setAttribute('aria-invalid', String(invalidRange));
+      dateInput.setAttribute('aria-describedby', 'filter-error');
+    }
+
+    for (const section of sections) {
+      if (section.dataset.category === category.value) section.setAttribute('aria-current', 'true');
+      else section.removeAttribute('aria-current');
+    }
+
+    visible = invalidRange ? [] : articles.filter(article =>
+      (!category.value || article.category === category.value) &&
+      (!source.value || article.source === source.value) &&
+      (!from.value || (article.day && article.day >= from.value)) &&
+      (!to.value || (article.day && article.day <= to.value)) &&
+      words.every(word => article.search.includes(word))
+    );
+
+    const count = numbers.format(visible.length);
+    const resultLabel = count + (visible.length === 1 ? ' titular' : ' titulares');
+    byId('section-heading').textContent = category.value ? 'Titulares · ' + category.value : 'Titulares';
+    byId('metric-visible').textContent = hasLoaded ? count : '—';
+    byId('result-label').hidden = !hasLoaded;
+    byId('result-label').textContent = resultLabel;
+
+    const cards = document.createDocumentFragment();
+    for (const article of visible) cards.append(articleCard(article));
+    byId('articles').hidden = !visible.length;
+    byId('articles').replaceChildren(cards);
+    exportButton.disabled = !visible.length;
+    byId('clear').disabled = !fields.some(field => field.value);
+
+    renderEmpty(invalidRange);
+    renderChart(hasLoaded);
+    renderNotice();
+    byId('announcement').textContent = loading ? 'Leyendo noticias.json.' : [
+      loadError ? 'Error al leer noticias.json.' : '',
+      hasLoaded ? resultLabel + '.' : '',
+      snapshot?.status === 'partial' ? 'Fuentes parciales.' : '',
+      snapshot?.status === 'error' ? 'Error de recopilación.' : ''
+    ].filter(Boolean).join(' ');
+  }
+
+  async function refresh() {
+    if (loading) return;
+    loading = true;
+    loadError = '';
+    refreshButton.disabled = true;
+    refreshButton.setAttribute('aria-busy', 'true');
+    render();
+
+    try {
+      const response = await fetch('./noticias.json?t='+Date.now(), {cache:'no-store'});
+      if (!response.ok) throw new Error('El servidor respondió con HTTP ' + response.status + '.');
+      const data = await response.json();
+      validate(data);
+      applySnapshot(data);
+    } catch (error) {
+      if (location.protocol === 'file:') {
+        loadError = 'Abre el dashboard desde GitHub Pages o un servidor web que sirva ambos archivos.';
+      } else if (error instanceof SyntaxError) {
+        loadError = 'El archivo recibido no contiene JSON válido.';
+      } else {
+        loadError = error.message || 'Comprueba la conexión y que el archivo esté publicado.';
+      }
+    } finally {
+      loading = false;
+      refreshButton.disabled = false;
+      refreshButton.removeAttribute('aria-busy');
+      render();
+    }
+  }
+
+  function csvCell(value) {
+    const text = String(value ?? '');
+    const safe = /^(?:\s*[=+@-]|[\t\r\n])/.test(text) ? "'" + text : text;
+    return '"' + safe.replaceAll('"', '""') + '"';
+  }
+
+  function exportCsv() {
+    if (!visible.length) return;
+    const columns = ['id', 'title', 'url', 'source', 'category', 'published_at', 'collected_at'];
+    const rows = visible.map(article => [
+      article.id, article.title, article.url, article.source, article.category, article.publishedAt, article.collectedAt
+    ]);
+    const csv = [columns, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n');
+    const blob = new Blob(['\uFEFF', csv, '\r\n'], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = element('a');
+    link.href = url;
+    link.download = 'noticias-' + dateKey(new Date()) + '.csv';
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function effectiveTheme() {
+    return document.documentElement.dataset.theme || (systemTheme.matches ? 'dark' : 'light');
+  }
+
+  function renderTheme() {
+    const dark = effectiveTheme() === 'dark';
+    themeButton.querySelector('span').textContent = dark ? 'Modo claro' : 'Modo oscuro';
+    themeButton.querySelector('use').setAttribute('href', dark ? '#i-sun' : '#i-moon');
+  }
+
+  themeButton.addEventListener('click', () => {
+    const theme = effectiveTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem('dashboard-noticias-theme', theme); } catch {}
+    renderTheme();
+  });
+  systemTheme.addEventListener('change', renderTheme);
+
+  for (const section of sections) {
+    section.addEventListener('click', () => {
+      category.value = section.dataset.category;
+      render();
+    });
+  }
+
+  for (const field of fields) field.addEventListener(field === query ? 'input' : 'change', render);
+  byId('clear').addEventListener('click', () => {
+    for (const field of fields) field.value = '';
+    render();
+  });
+  refreshButton.addEventListener('click', refresh);
+  exportButton.addEventListener('click', exportCsv);
+
+  fillSelect(category, categories);
+  renderTheme();
+  refresh();
+</script>
+</body>
+</html>
+```
